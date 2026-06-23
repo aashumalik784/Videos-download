@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Video Downloader</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Video Downloader</h1>
+        <p>YouTube, Instagram, Twitter, Facebook - sabhi links support karta hai</p>
+        
+        <div class="input-group">
+            <input type="text" id="videoUrl" placeholder="Video link yahan paste karein...">
+            <button onclick="fetchVideo()">Download</button>
+        </div>
+        
+        <div class="loader" id="loader"></div>
+        <div id="result"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
