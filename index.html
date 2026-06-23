@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Downloader</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { background: white; padding: 40px; border-radius: 15px; max-width: 600px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; }
+        h1 { color: #333; margin-bottom: 10px; }
+        p { color: #666; margin-bottom: 25px; }
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        input { flex: 1; padding: 12px 15px; border: 2px solid #ddd; border-radius: 8px; font-size: 15px; min-width: 200px; }
+        input:focus { outline: none; border-color: #667eea; }
+        button { padding: 12px 25px; background: #667eea; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 600; }
+        button:hover { background: #5568d3; }
+        .loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #result { margin-top: 20px; }
+        .video-card { background: #f9f9f9; padding: 20px; border-radius: 10px; text-align: left; }
+        .video-card img { width: 100%; border-radius: 8px; margin-bottom: 15px; }
+        .video-card h3 { color: #333; margin-bottom: 15px; font-size: 18px; }
+        .download-btn { display: inline-block; padding: 12px 25px; background: #28a745; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin-top: 10px; }
+        .download-btn:hover { background: #218838; }
+        .error { color: #dc3545; background: #f8d7da; padding: 15px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Video Downloader</h1>
+        <p>YouTube, Instagram, Facebook, Twitter - sabhi platforms</p>
+        <div class="input-group">
+            <input type="text" id="videoUrl" placeholder="Video URL paste karein...">
+            <button onclick="fetchVideo()">Download</button>
+        </div>
+        <div class="loader" id="loader"></div>
+        <div id="result"></div>
+    </div>
+    <script>
+        const API_URL = "https://videos-download-cxoq.onrender.com/download";
+        async function fetchVideo() {
+            const url = document.getElementById('videoUrl').value.trim();
+            const resultDiv = document.getElementById('result');
+            const loader = document.getElementById('loader');
+            if (!url) {
+                resultDiv.innerHTML = '<div class="error">❌ Please enter a URL!</div>';
+                return;
+            }
+            loader.style.display = "block";
+            resultDiv.innerHTML = "";
+            try {
+                const response = await fetch(`${API_URL}?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+                if (data.status === "success") {
+                    resultDiv.innerHTML = `
+                        <div class="video-card">
+                            <h3>✅ ${data.title}</h3>
+                            ${data.thumbnail ? `<img src="${data.thumbnail}" alt="thumbnail">` : ''}
+                            <p><strong>Platform:</strong> ${data.platform || 'Unknown'}</p>
+                            <a href="${data.download_url}" class="download-btn" target="_blank">⬇️ Download Video</a>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ ${data.message || 'Download failed'}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = '<div class="error">❌ Backend error</div>';
+            } finally {
+                loader.style.display = "none";
+            }
+        }
+        document.getElementById('videoUrl').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') fetchVideo();
+        });
+    </script>
+</body>
+</html>
